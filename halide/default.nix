@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, llvm_33, ... }:
+{ stdenv, fetchgit, clang_33, llvm_33, ... }:
 
 let
   rev = "1de2c35db0";
@@ -8,9 +8,9 @@ stdenv.mkDerivation rec {
   src = fetchgit {
 	  url = https://github.com/halide/Halide.git;
       inherit rev;
-	  md5 = "c4d387877b9fc57b9a910e6f74cd10c7";
+	  md5 = "10626a7cabfea4328329faf43d93de4c";
   };
-  buildIndputs = [ llvm_33 ];
+  buildInputs = [ clang_33 llvm_33 ];
 
 }
 
