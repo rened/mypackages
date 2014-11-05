@@ -31,8 +31,13 @@ stdenv.mkDerivation rec {
 	cd ..
     export LLVM_CONFIG=llvm3.3/Release+Asserts/bin/llvm-config
     export CLANG=llvm3.3/Release+Asserts/bin/clang
-    make && make run_tests && make test_apps
+    make && make distrib
   '';
 
+  installPhase = ''
+	mkdir $out
+    cp -r distrib/* $out
+	ln -s $out/bin $out/lib
+  '';
 }
 
