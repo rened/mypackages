@@ -1,4 +1,4 @@
-{ stdenv, fetchgit, fetchsvn, subversion, python, ... }:
+{ stdenv, fetchgit, fetchsvn, subversion, python, zlib, ... }:
 
 let
   rev = "1de2c35db0";
@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
 #    sed -e "s#CLANG)#DUMMY_IGNORE)#" -i CMakeLists.txt
 #  '';
 
-  buildInputs = [ subversion python ];
+  buildInputs = [ subversion python zlib ];
   configurePhase = ''
     svn co --trust-server-cert https://llvm.org/svn/llvm-project/llvm/branches/release_33 llvm3.3
 	svn co --trust-server-cert https://llvm.org/svn/llvm-project/cfe/branches/release_33 llvm3.3/tools/clang
