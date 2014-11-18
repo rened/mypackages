@@ -1,13 +1,13 @@
-{ cpuonly ? false, stdenv, fetchgit, fetchurl, gcc46, lmdb, cmake, wget, unzip, openblas, cudatoolkit6_5, opencv, boost, glog, google-gflags, protobuf, protobufc, leveldb, snappy, hdf5, ... }:
+{ cpuonly ? false, stdenv, fetchgit, fetchurl,  julia,  ... }:
 
 let
-  rev = "c18d22eb92";
+  rev = "c328d2ca9d";
 in
 stdenv.mkDerivation { 
-  name = "caffe-${ if cpuonly then "cpu-" else ""}${rev}"; 
-  buildInputs = (if cpuonly then [] else [ cudatoolkit6_5 ]) ++ [ gcc46 lmdb cmake wget unzip openblas opencv boost glog google-gflags protobuf protobufc leveldb snappy hdf5 ];
+  name = "caffejl"; 
+  #buildInputs = [ caffe ];
   src = fetchgit {
-    url = https://github.com/BVLC/caffe.git;
+    url = file:///home/rene/g/caffejl;
     inherit rev;
     md5 = "ecb730806ad0b65e93f99b2d2d90c442";
   };

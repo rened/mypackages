@@ -1,0 +1,33 @@
+#!/bin/bash
+
+if [ ! -e REQUIRE ]
+then
+	echo "REQUIRE does not exist in the current directory. Exiting."
+	exit 1;
+fi
+
+HASH=`nix-hash REQUIRE`
+
+export JULIA_PKGDIR=$HOME/.julia/juliawithpackages/$HASH
+export JULIA_LOAD_PATH="`pwd`/modules"
+
+if [ ! -e $JULIA_PKGDIR/v0.3/REQUIRE ]
+then
+	if [ `julia -e "exit(all(map(x->isempty(x) ? true : length(map(int,split(split(x,' ')[2],'.')))==3, split(readall(\"REQUIRE\"),'\n'))))"` ]
+	then
+		echo "juliawithpackages: REQUIRE file needs to specify the version of each package, like \"HDF5 0.4.6\""
+		exit 1;
+	fi
+	echo "Julia package dir"
+	echo "  $JULIA_PKGDIR"
+	echo "does not exist. Installing packages ..."
+	mkdir -p $JULIA_PKGDIR/{v0.3,v0.4}
+	cp REQUIRE $JULIA_PKGDIR/v0.3
+	cp REQUIRE $JULIA_PKGDIR/v0.4
+	julia -e "Pkg.init();Pkg.resolve()"
+	chmod -R a-w $JULIA_PKGDIR
+fi
+
+julia $* 
+	
+

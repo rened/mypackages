@@ -1,8 +1,7 @@
 { stdenv, fetchgit, gfortran, perl, m4, llvm, gmp, pcre, zlib
  , readline, fftwSinglePrec, fftw, libunwind, suitesparse, glpk, fetchurl
  , ncurses, libunistring, lighttpd, patchelf, openblas, liblapack
- , tcl, tk, xproto, libX11, git, mpfr, which
- } :
+ , tcl, tk, xproto, libX11, git, mpfr, which, ... } :
 
 assert stdenv.isLinux; 
 
@@ -11,17 +10,18 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "julia";
-  version = "0.3.2";
+  version = "0.4.0pre";
+  rev = "a7a4e962b29b0b8ece17deb20fb4175a4e743b92";
   name = "${pname}-${version}";
 
   dsfmt_ver = "2.2";
-  grisu_ver = "1.1.1";
-  openblas_ver = "v0.2.10";
+  #grisu_ver = "1.1.1";
+  openblas_ver = "v0.2.12";
   lapack_ver = "3.5.0";
   arpack_ver = "3.1.5";
-  lighttpd_ver = "1.4.29";
-  patchelf_ver = "0.6";
-  pcre_ver = "8.31";
+  #lighttpd_ver = "1.4.29";
+  patchelf_ver = "0.8";
+  pcre_ver = "8.35";
   utf8proc_ver = "1.1.6";
 
   dsfmt_src = fetchurl {
@@ -29,14 +29,14 @@ stdenv.mkDerivation rec {
     name = "dsfmt-${dsfmt_ver}.tar.gz";
     sha256 = "bc3947a9b2253a869fcbab8ff395416cb12958be9dba10793db2cd7e37b26899";
   };
-  grisu_src = fetchurl {
-    url = "http://double-conversion.googlecode.com/files/double-conversion-${grisu_ver}.tar.gz";
-    sha256 = "e1cabb73fd69e74f145aea91100cde483aef8b79dc730fcda0a34466730d4d1d";
-  };
+#  grisu_src = fetchurl {
+#    url = "http://double-conversion.googlecode.com/files/double-conversion-${grisu_ver}.tar.gz";
+#    sha256 = "e1cabb73fd69e74f145aea91100cde483aef8b79dc730fcda0a34466730d4d1d";
+#  };
   openblas_src = fetchurl {
     url = "https://github.com/xianyi/OpenBLAS/tarball/${openblas_ver}";
     name = "openblas-${openblas_ver}.tar.gz";
-    sha256 = "06i0q4qnd5q5xljzrgvda0gjsczc6l2pl9hw6dn2qjpw38al73za";
+    sha1 = "30pcyln1w5ms01ns1v7v0k7fn4sgg222";
   };
   arpack_src = fetchurl rec {
     url = "https://github.com/opencollab/arpack-ng/archive/${arpack_ver}.tar.gz";
@@ -48,10 +48,10 @@ stdenv.mkDerivation rec {
     name = "lapack-${lapack_ver}.tgz";
     sha256 = "0lk3f97i9imqascnlf6wr5mjpyxqcdj73pgj97dj2mgvyg9z1n4s";
   };
-  lighttpd_src = fetchurl {
-    url = "http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-${lighttpd_ver}.tar.gz";
-    sha256 = "ff9f4de3901d03bb285634c5b149191223d17f1c269a16c863bac44238119c85";
-  };
+#  lighttpd_src = fetchurl {
+#    url = "http://download.lighttpd.net/lighttpd/releases-1.4.x/lighttpd-${lighttpd_ver}.tar.gz";
+#    sha256 = "ff9f4de3901d03bb285634c5b149191223d17f1c269a16c863bac44238119c85";
+#  };
   patchelf_src = fetchurl {
     url = "http://hydra.nixos.org/build/1524660/download/2/patchelf-${patchelf_ver}.tar.bz2";
     sha256 = "00bw29vdsscsili65wcb5ay0gvg1w0ljd00sb5xc6br8bylpyzpw";
@@ -67,18 +67,20 @@ stdenv.mkDerivation rec {
 
   src = fetchgit {
     url = "git://github.com/JuliaLang/julia.git";
-    rev = "refs/tags/v${version}";
+    rev = "a7a4e962b29b0b8ece17deb20fb4175a4e743b92";
     sha256 = "11w81mznhlfcnn6vcv1rhrbajnyz8aim29wvwl92zsllq8z9hv2i";
-    name = "julia-git-v${version}";
+    name = "julia-git-rev_${rev}";
   };
 
   buildInputs = [ gfortran perl m4 gmp pcre llvm readline zlib
+    openblas liblapack tcl tk git mpfr which
     fftw fftwSinglePrec libunwind suitesparse glpk ncurses libunistring patchelf
-    openblas liblapack tcl tk xproto libX11 git mpfr which
     ];
 
+    #openblas liblapack tcl tk xproto libX11 git mpfr which
   configurePhase = ''
-    for i in GMP LLVM PCRE READLINE FFTW LIBUNWIND SUITESPARSE GLPK LIGHTTPD ZLIB MPFR;
+    for i in GMP LLVM PCRE READLINE FFTW LIBUNWIND SUITESPARSE GLPK ZLIB MPFR;
+#    for i in GMP LLVM PCRE READLINE FFTW LIBUNWIND SUITESPARSE GLPK LIGHTTPD ZLIB MPFR;
     do
       makeFlags="$makeFlags USE_SYSTEM_$i=1 "
     done
@@ -88,7 +90,7 @@ stdenv.mkDerivation rec {
       cp "$1" "$2/$(basename "$1" | sed -e 's/^[a-z0-9]*-//')"
     }
 
-    for i in "${grisu_src}" "${dsfmt_src}" "${arpack_src}" "${patchelf_src}" \
+    for i in "${dsfmt_src}" "${arpack_src}" "${patchelf_src}" \
         "${pcre_src}" "${utf8proc_src}" "${lapack_src}" "${openblas_src}"; do
       copy_kill_hash "$i" deps
     done
