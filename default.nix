@@ -7,5 +7,5 @@ with import <nixpkgs> {}; rec {
   julia040 = callPackage ./julia/0.4.0pre.nix {};
   caffejl = callPackage ./caffejl {};
   #caffejl = callPackage ./caffejl { caffe = caffecpu; };
-  juliawithpackages = callPackage ./julia/pure.nix { julia = julia; packages = [ "HDF5" "FactCheck" ]; };
+  juliawithpackages = callPackage ./julia/withpackages.nix {};
 }

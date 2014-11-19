@@ -1,0 +1,5 @@
+git@github.com:rened/BinDeps.jl.git
+HDF5 0.4.6
+
+git@github.com:rened/LibGit2.jl.git 9283d54a87de3253a66bfb48a0d0b3f677ed5e13
+JSON
