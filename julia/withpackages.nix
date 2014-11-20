@@ -1,17 +1,23 @@
-{ stdenv, ... } :
+{ stdenv, fetchgit, ... } :
 
+let
+	rev = "dcc0b96d2adcb6bcf6a139f526718d7a335e0d11";
+in
 stdenv.mkDerivation rec {
-  pname = "julia-withpackages";
-  version = "0.0.0";
-  name = "${pname}-${version}";
+  pname = "juliawithpackages";
+  #version = "0.0.0";
+  name = "${pname}";
 
-  src = ./jwp-src;
+  src = fetchgit {
+	  url = http://github.com/rened/juliawithpackages.git;
+      inherit rev;
+	  md5 = "047410ea6099f4a4556db38088687c63";
+  };
   
   installPhase = ''
-    mkdir -p $out/{bin,share}
-    substituteInPlace jwp --replace INSTALLSCRIPT $out/share/installpackages.jl
+    mkdir -p $out/bin
 	cp jwp $out/bin
-	cp installpackages.jl $out/share
+	cp installpackages.jl $out/bin
     chmod +x $out/bin/jwp
   '';
 
